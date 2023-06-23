@@ -70,4 +70,4 @@ def real_time_price(stock_code):
 # print(nasdaq_stock_urls())
 print(real_time_price("AAPL"))
 #print(nasdaq_news_scrape("AAPL"))
-#print(yahoo_news_scrape("AAPL"))
+print(yahoo_news_scrape("AAPL"))
