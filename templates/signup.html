@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oranienbaum&family=Space+Grotesk&family=Vidaloka&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='signup.css') }}">
+    <title>StockWatch</title>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div style="text-align: center">
+                <h2>StockWatch</h2>
+                <p style="font-family: 'Space Grotesk', sans-serif; font-size: 14px;">Already have an account? <a href="./login">Log In!</a></p>
+            </div>
+            <form method="post">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="username" class="form-control" id="username" name="username" placeholder="Enter your username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    <div style="padding-top: 5px">
+                        <input type="checkbox" class="form-check-input" id="showpass" onclick="showPassword()">
+                        <label class="check" for="showpass" style="font-family: 'Space Grotesk', sans-serif;">Show Password</label>
+                    </div>
+                    <script>
+                        function showPassword() {
+                            var x = document.getElementById("password");
+                            if (x.type === "password") {
+                                x.type = "text";
+                            } else {
+                                x.type = "password";
+                            }
+                        }
+                    </script>
+                </div>
+                {% if error == True %}
+                <div class="error">
+                    <p>Username already exists, please try another one.</p>
+                </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

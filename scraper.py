@@ -53,6 +53,26 @@ def yahoo_news_scrape(stock_code):
         news_urls.append(f"https://finance.yahoo.com/{news.find('a', href=True)['href']}")
     return news_urls
 
+def cnbc_news_scrape(stock_code):
+    url = f"https://www.cnbc.com/quotes/{stock_code}?qsearchterm="
+    html_text = requests.get(url, headers=header).text
+    soup = BeautifulSoup(html_text, 'lxml')
+
+    layer1 = soup.find_all('ul', class_ = "LatestNews-list")[0].find_all('li', class_ = "LatestNews-item")
+    news_urls = []
+    for news in layer1:
+        if news.find('a', href=True)['href'] != '/pro/':
+            news_urls.append(news.find('a', href=True)['href'])
+    
+    layer2 = soup.find_all('ul', class_ = "LatestNews-list")[1].find_all('li', class_ = "LatestNews-item")
+    for news1 in layer2:
+        if news1.find('a', href=True)['href'] != '/pro/':
+            news_urls.append(news1.find('a', href=True)['href'])
+    return news_urls
+    
+
+
+# Provided by Yahoo Finance
 def real_time_price(stock_code):
     url = f"https://finance.yahoo.com/quote/{stock_code}?p={stock_code}&.tsrc=fin-srch"
     html_text = requests.get(url, headers=header, timeout=5).text
@@ -70,4 +90,5 @@ def real_time_price(stock_code):
 # print(nasdaq_stock_urls())
 print(real_time_price("AAPL"))
 #print(nasdaq_news_scrape("AAPL"))
-print(yahoo_news_scrape("AAPL"))
+#print(yahoo_news_scrape("AAPL"))
+print(cnbc_news_scrape("AAPL"))
