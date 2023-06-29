@@ -7,7 +7,7 @@ app.secret_key = "stockwatch"
 
 conn = psycopg2.connect(
     host="localhost",
-    database="Test",
+    database="StockWatch",
     user="postgres",
     password="admin"
 )
@@ -40,9 +40,14 @@ def login():
             pswd = cursor.fetchone()
             if password == pswd[0]:
                 session["username"] = username
+                cursor.close()
                 return redirect(url_for("home"))
             else:
+                cursor.close()
                 return render_template("login.html", error=True)
+        else:
+            cursor.close()
+            return render_template("login.html", error=True)
     else:
         return render_template("login.html", error=False)
 
@@ -66,6 +71,7 @@ def signup():
         if existing_user:
             return render_template("signup.html", error=True)
         else:
+            cursor.execute('INSERT INTO watchlist (stock_id) VALUES (%s)', (1,))
             cursor.execute('INSERT INTO "user" (username, password, email) VALUES (%s, %s, %s)', (username, password, email))
             conn.commit()
             cursor.close()

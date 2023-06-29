@@ -7,6 +7,24 @@ header = {
     "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0"
 }
 
+def get_stock_list():
+    url = 'https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit=7675' # 'limit': how many data points to show at a time, 'offset': starting point for data to be shown
+    data = requests.get(url, headers=header, timeout=5).json() # Make a GET request to the NASDAQ API, which stores all stock data in JSON objects
+    # print(json.dumps(data, indent=4))
+
+    stocks = {}
+
+    for stock in data["data"]["table"]["rows"]:
+        symbol = stock.get("symbol")
+        name = stock.get("name")
+        if '^' in symbol:
+            continue
+        else:
+            if '/' in symbol:
+                symbol = symbol.replace("/","-")
+            stocks[symbol] = name
+    return stocks
+
 def nasdaq_stock_urls():
     url = 'https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit=7675' # 'limit': how many data points to show at a time, 'offset': starting point for data to be shown
     data = requests.get(url, headers=header, timeout=5).json() # Make a GET request to the NASDAQ API, which stores all stock data in JSON objects
@@ -88,7 +106,15 @@ def real_time_price(stock_code):
     
 
 # print(nasdaq_stock_urls())
-print(real_time_price("AAPL"))
-#print(nasdaq_news_scrape("AAPL"))
-#print(yahoo_news_scrape("AAPL"))
-print(cnbc_news_scrape("AAPL"))
+# print(real_time_price("AAPL"))
+# print(nasdaq_news_scrape("AAPL"))
+# print(yahoo_news_scrape("AAPL"))
+# print(cnbc_news_scrape("AAPL"))
+
+# if "BRK/A" in get_stock_list():
+#     print("fail")
+# else:
+#     print("pass")
+if __name__ == '__main__':
+    import timeit
+    print(timeit.timeit("real_time_price('AAPL')", setup="from __main__ import real_time_price", number=1))
