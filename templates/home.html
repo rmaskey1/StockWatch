@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<htmllang="en">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,10 +8,76 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <title>StockWatch</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1,
+        h2 {
+            color: #333;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 200px;
+            margin-right: 10px;
+        }
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+    <title>StockHawk</title>
 </head>
+
 <body>
-    <h1>StockWatch</h1>
-    <a href="{{ url_for('logout') }}" class="btn btn-primary">Logout</a>
+    <h1>StockHawk</h1>
+    <a href="{{ url_for('logout') }}" class="btn btn-primary logout-btn">Logout</a>
+    
+    <h2>Add Stock</h2>
+    <form action="{{ url_for('add') }}" method="POST" class="search-form">
+        <div class="input-group">
+            <input type="text" class="form-control search-input" id="ticker" name="ticker" required>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </form>
+
+    <h2>My Stocks</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Company Name</th>
+                <th>Stock Price</th>
+                <th>Price Change</th>
+                <th>Percent Change</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in stocks %}
+            <tr>
+                <td>{{ stock[1] }}</td>
+                <td>{{ stock[2] }}</td>
+                <td>{{ stock[3] }}</td>
+                <td>{{ stock[4] }}</td>
+                <td>{{ stock[5] }}</td>
+                <td>
+                    <form action="{{ url_for('delete', stock_id=stock[0]) }}" method="POST">
+                        <button type="submit" class="btn btn-danger"><span aria-hidden="true">&times;</span></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
+
 </html>
