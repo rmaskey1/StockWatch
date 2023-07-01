@@ -43,7 +43,7 @@
     <a href="{{ url_for('logout') }}" class="btn btn-primary logout-btn">Logout</a>
     
     <h2>Add Stock</h2>
-    <form action="{{ url_for('home') }}" method="POST" class="search-form">
+    <form action="{{ url_for('add') }}" method="POST" class="search-form">
         <div class="input-group">
             <input type="text" class="form-control search-input" id="ticker" name="ticker" required>
             <button type="submit" class="btn btn-primary">Add</button>
@@ -56,16 +56,19 @@
             <tr>
                 <th>Ticker</th>
                 <th>Company Name</th>
-                <th>Current Stock Price</th>
+                <th>Stock Price</th>
+                <th>Price Change</th>
+                <th>Percent Change</th>
             </tr>
         </thead>
         <tbody>
             {% for stock in stocks %}
             <tr>
+                <td>{{ stock[1] }}</td>
                 <td>{{ stock[2] }}</td>
                 <td>{{ stock[3] }}</td>
                 <td>{{ stock[4] }}</td>
-                <td>
+                <td>{{ stock[5] }}</td>
                     <form action="{{ url_for('delete', stock_id=stock[0]) }}" method="POST">
                         <button type="submit" class="btn btn-danger"><span aria-hidden="true">&times;</span></button>
                     </form>

@@ -23,33 +23,53 @@ def make_session_permanent():
 @app.route('/', methods=['POST', 'GET'])
 def home():
     if "username" in session:
-        if request.method == 'POST':
-            ticker = request.form['ticker']
-            username = session["username"]
-            response = finnhub_client.symbol_lookup(ticker)
-            if response["count"]>0:
-                company_name = response["result"][0]["description"]
-            else:
-                print("Company not found.")
-            response = finnhub_client.quote(ticker)
-            if 'c'in response:
-                current_price = response['c']
-            else:
-                print("Current stock price not available.")
-            cursor = conn.cursor()
-            cursor.execute('INSERT INTO stock (ticker, username, company_name, price) VALUES (%s, %s, %s, %s)', (ticker, username, company_name, current_price))
-            conn.commit()
-            cursor.close()
-
         username = session["username"]
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM stock WHERE username = %s', (username,))
-        stocks = cursor.fetchall()
+        cursor.execute('SELECT user_id FROM "user" where username = %s', (username,))
+        user_id = cursor.fetchone()
+        cursor.execute('SELECT stock_id FROM watchlist WHERE user_id = %s', (user_id,))
+        stock_ids = cursor.fetchall()
+        stocks = []
+        for stock_id in stock_ids:
+            cursor.execute('SELECT * FROM stock WHERE stock_id = %s', (stock_id,))
+            stock = cursor.fetchone()
+            stocks.append(stock)
+        conn.commit()
         cursor.close()
-
         return render_template("home.html", stocks=stocks)
     else:
         return redirect(url_for("login"))
+
+@app.route('/add', methods=['POST'])
+def add():
+    if "username" in session and request.method == "POST":
+        username = session["username"]
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM "user" where username = %s', (username,))
+        user_id = cursor.fetchone()
+        stock_code = request.form['ticker']
+        cursor.execute("SELECT * FROM stock WHERE stock_code = %s", (stock_code,))
+        if cursor.fetchone() is not None:
+            cursor.execute('SELECT stock_id FROM stock WHERE stock_code = %s', (stock_code,))
+            stock_id = cursor.fetchone()
+            cursor.execute('INSERT INTO watchlist (user_id, stock_id) VALUES (%s, %s)', (user_id, stock_id,))
+            conn.commit()
+            cursor.close()
+            return redirect(url_for("home"))
+        else:
+            return redirect(url_for("home"))
+
+@app.route('/delete/<stock_id>', methods=['POST'])
+def delete(stock_id):
+    if "username" in session:
+        username = session["username"]
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM "user" where username = %s', (username,))
+        user_id = cursor.fetchone()
+        cursor.execute('DELETE FROM watchlist WHERE stock_id = %s AND user_id = %s', (stock_id, user_id))
+        conn.commit()
+        cursor.close()
+    return redirect(url_for("home"))
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -98,8 +118,10 @@ def signup():
         if existing_user:
             return render_template("signup.html", error=True)
         else:
-            cursor.execute('INSERT INTO watchlist (stock_id) VALUES (%s)', (1,))
             cursor.execute('INSERT INTO "user" (username, password, email) VALUES (%s, %s, %s)', (username, password, email))
+            cursor.execute('SELECT user_id FROM "user" where username = %s', (username,))
+            user_id = cursor.fetchone()
+            cursor.execute('INSERT INTO watchlist (user_id, stock_id) VALUES (%s, %s)', (user_id, 1,))
             conn.commit()
             cursor.close()
             return redirect(url_for("login"))
