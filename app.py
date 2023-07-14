@@ -1,6 +1,5 @@
 import psycopg2
 from datetime import timedelta
-import finnhub
 from flask import Flask, request, send_file, render_template, redirect, url_for, session
 
 app = Flask(__name__)
@@ -13,12 +12,10 @@ conn = psycopg2.connect(
     password="admin"
 )
 
-finnhub_client = finnhub.Client(api_key="cie9espr01qmfas4b430cie9espr01qmfas4b43g")
-
 @app.before_request
 def make_session_permanent():
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=0.1)
+    app.permanent_session_lifetime = timedelta(minutes=30)
 
 @app.route('/', methods=['POST', 'GET'])
 def home():

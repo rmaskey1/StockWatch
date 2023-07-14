@@ -1,15 +1,9 @@
-import psycopg2
-from flask import Flask, request, send_file, render_template, redirect, url_for, session
+import yfinance as yf
 
-conn = psycopg2.connect(
-    host="localhost",
-    database="Test",
-    user="postgres",
-    password="admin"
-)
-
-cursor = conn.cursor()
-username = "reshaj!"
-cursor.execute('SELECT password FROM "user" WHERE username = %s', (username,))
-existing_user = cursor.fetchone()
-print(existing_user[0])
+ticker = yf.Ticker('GOOGL').info
+print(ticker)
+market_price = ticker['currentPrice']
+previous_close_price = ticker['regularMarketPreviousClose']
+print('Ticker: GOOGL')
+print('Market Price:', market_price)
+print('Previous Close Price:', previous_close_price)
