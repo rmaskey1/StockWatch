@@ -45,7 +45,6 @@
 <body>
     <h1>StockHawk</h1>
     <a href="{{ url_for('logout') }}" class="btn btn-primary logout-btn">Logout</a>
-    
     <h2>Add Stock</h2>
     <form action="{{ url_for('add') }}" method="POST" class="search-form">
         <div class="input-group">
@@ -74,12 +73,12 @@
                 {% if stock[4] >= 0 %}
                     <td>+{{ stock[4] }}</td>
                 {% else %}
-                    <td>-{{ stock[4] }}</td>
+                    <td>{{ stock[4] }}</td>
                 {% endif %}
                 {% if stock[5] >= 0 %}
                     <td>+{{ stock[5] }}%</td>
                 {% else %}
-                    <td>-{{ stock[5] }}%</td>
+                    <td>{{ stock[5] }}%</td>
                 {% endif %}
                 <td>
                     <form action="{{ url_for('delete', stock_id=stock[0]) }}" method="POST">
